@@ -57,23 +57,23 @@ const checkUsernameExists = async (req, res, next) => {
 
 
 const validateRoleName = async (req, res, next) => {
-    if(req.role_name !== undefined) {
-      req.role_name = req.role_name.trim()
-      next()
-    } else if(!req.role_name || req.role_name.trim() === '') {
+    if(!req.body.role_name || req.body.role_name.trim() === '') {
       req.role_name = 'student'
       next()
-    } else if(req.role_name.trim() === 'admin') {
+    } else if(req.body.role_name.trim() === 'admin') {
       next({
         status: 422,
         message: "Role name can not be admin"
       })
-    } else if(req.role_name.trim().length > 32 ) {
+    } else if(req.body.role_name.trim().length > 32 ) {
       next({
         status: 422,
         message: "Role name can not be longer than 32 chars"
       })
-    } else next()
+    } else {
+      req.role_name = req.body.role_name.trim()
+      next()
+    }
 }
 
 module.exports = {
