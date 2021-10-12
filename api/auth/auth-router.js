@@ -10,25 +10,23 @@ router.post("/register", validateRoleName, (req, res, next) => {
   const { role_name } = req
   const hash = bcrypt.hashSync(password, 8)
   User.add({ username, password: hash, role_name})
-    .then(noidea => {
-      res.status(200).json(noidea)
+    .then(newUser => {
+      res.status(201).json(newUser)
     })
     .catch(next)
 });
 
 
 router.post("/login", checkUsernameExists, (req, res, next) => {
-  let { password, user_id } = req.body
-  User.findById(user_id)
-    .then(user => {
-      if(user && bcrypt.compareSync(password, user.password)) {
-        const token = buildToken(user)
-        res.status(200).json({
-          message: `${user.username} is back!`,
-          token
-        })
-      }
+   if(bcrypt.compareSync(req.body.password, req.user.password)) {
+    const token = buildToken(req.user)
+    res.json({
+      message: `${req.user.username} is back!`,
+      token
     })
+   } else {
+     next({status:403, message: "Invalid credentials"})
+   }
 });
 
 module.exports = router;
