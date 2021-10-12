@@ -5,11 +5,11 @@ const { JWT_SECRET } = require("../secrets"); // use this secret!
 const restricted = async (req, res, next) => {
   const token = req.header.authorization
   if(!token) {
-    return next({ status: 401, message: "Token invalid" })
+    return next({ status: 401, message: "Token required" })
   } 
   jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
     if(err) {
-      return next({ status:401, message: "Token required" })
+      return next({ status:401, message: "Token invalid" })
     } else {
     req.decodedToken = decodedToken
     next()
@@ -33,7 +33,7 @@ const checkUsernameExists = async (req, res, next) => {
   try {
     const [user] = await findBy({ username: req.body.username })
     if(!user) {
-      next({ status: 422, message: "Invalid credentials" })
+      next({ status: 401, message: "Invalid credentials" })
     } else {
       req.user = user
       next()
