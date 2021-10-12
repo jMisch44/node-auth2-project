@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 
 const restricted = async (req, res, next) => {
-  const token = req.header.authorization
+  const token = req.headers.authorization
   if(!token) {
     return next({ status: 401, message: "Token required" })
   } 
